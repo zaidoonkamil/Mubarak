@@ -15,4 +15,7 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+
+![Google_Play_Store_badge_IT svg](https://github.com/zaidoonkamil/PicSplash/assets/95576756/5b26b13f-4353-41ab-a2e2-4200c09eb857)
+
 https://play.google.com/store/apps/details?id=com.zaidoon.Mubarak

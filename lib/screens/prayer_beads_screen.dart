@@ -33,10 +33,22 @@ class PrayerBeads extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           alignment: Alignment.center,
-                          child: Text(cubit.zkr,style: const TextStyle(
-                            fontSize: 24,
-                            color: Colors.black
-                          ),),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.arrow_back_ios),
+                                const Spacer(),
+                                Text(
+                                  cubit.zkr,style: const TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.black,
+                                ),),
+                                const Spacer(),
+                                const Icon(Icons.arrow_forward_ios),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                       const Spacer(),

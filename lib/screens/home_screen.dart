@@ -1,17 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:location/location.dart';
 import 'package:muslim_app/components/components.dart';
 import 'package:muslim_app/components/time_util.dart';
 import 'package:muslim_app/cubit/controller.dart';
 import 'package:muslim_app/models/models.dart';
 import 'package:muslim_app/shared/cache_helper.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:workmanager/workmanager.dart';
 
 var firstTime = true;
-PermissionStatus? permissionGranted;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -31,33 +29,18 @@ class _HomeScreenState extends State<HomeScreen> {
   bool visiblityLoader = true;
   var handlerError = false;
 
-  Future getLocationPermission() async {
-
-    Location location = Location();
-
-    bool serviceEnabled;
-
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    getLocationPermission();
+    Workmanager().initialize(
+        callbackDispatcher,
+        isInDebugMode: false
+    );
+    Workmanager().registerPeriodicTask(
+      "1",
+      "periodic Notification",
+      frequency: const Duration(hours: 16),
+    );
 
     if(CacheHelper.getDataFirstRun(key: 'firstRun') !='first') {
       Future.delayed( const Duration(milliseconds: 1), () {
@@ -69,8 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );    });
     }
       CacheHelper.saveDataFirstRun(key: 'firstRun', value: 'first');
-    print('-----------------------');
-    print(CacheHelper.getDataFirstRun(key: 'firstRun'));
 
     updatePrayers(() {
       showDialog(
@@ -115,7 +96,10 @@ class _HomeScreenState extends State<HomeScreen> {
       prayers = newPrayers;
 
       nextPrayer = getNextPrayer()!;
-      if (nextPrayer.status == "now") currentPrayer = nextPrayer;
+      if (nextPrayer.status == "now"){
+
+        currentPrayer = nextPrayer;
+      }
 
       for (var element in prayers) {
         if (element.selected) currentPrayer = element;
@@ -281,6 +265,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           )),
                     ],
                   )),
+              InkWell(
+                onTap: (){
+                  awesomeDialog(
+                      context,
+                      'صمم هذا التطبيق بشكل مجاني بالكامل',
+                      '',
+                      ' وهو  صدقة  جارية  الى  روح  المرحوم \n  كامل علي اسماعيل  تغمده  الله  بواسع  رحمته \n والى  جميع  المسلمين  الاحياء  منهم  والاموات '
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: const Color(0xFFBC9975)
+                    ),
+                    height: 40,
+                    width: 40,
+                    child: Image.asset('assets/images/UserExclamationmark .png'),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -330,8 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
           prayers[3],
           prayers[4],
           prayers[5]
-        ]
-                .map((e) => Column(
+        ].map((e) => Column(
                       children: [
                         const SizedBox(height: 10),
                         Row(
@@ -355,7 +360,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Text(e.title,
                                         style: const TextStyle(
                                             color: Colors.black,
-                                            fontSize: 24)))),
+                                            fontSize: 24),
+                                    ),
+                                ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10),

@@ -25,13 +25,13 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-
+//mainn
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocObserver();
   Map<String, dynamic> json1 = jsonDecode(azkar);
   AzkarAndTsabeeh.fromJson(json1);
-  HttpOverrides.global = MyHttpOverrides(); //new
+  HttpOverrides.global = MyHttpOverrides();
   await CacheHelper.init();
   await CacheHelper.initt();
   CacheHelper.getDataFirstRun(key: 'firstRun');
@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
       builder: (p0, p1, p2) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          title: 'Mubarak',
           theme: ThemeData(
             scaffoldBackgroundColor:const Color(0xFF232B31),
             primaryColor:const Color(0xFFBC9975),

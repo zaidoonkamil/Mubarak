@@ -1,11 +1,12 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
-import 'package:location/location.dart';
+import 'package:flutter_svg/svg.dart';
+import 'dart:math' show pi;
 
-import 'home_screen.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:muslim_app/components/components.dart';
 
 class QiblahScreen extends StatefulWidget {
   const QiblahScreen({super.key});
@@ -14,78 +15,140 @@ class QiblahScreen extends StatefulWidget {
   State<QiblahScreen> createState() => _QiblahScreenState();
 }
 
-Animation<double>? animation;
-AnimationController? _animationController;
-double begin = 0.0;
-
 class _QiblahScreenState extends State<QiblahScreen>
     with SingleTickerProviderStateMixin {
 
-  Location location = Location();
+  final _deviceSupport = FlutterQiblah.androidDeviceSensorSupport();
+  final _compassSvg = SvgPicture.asset('assets/images/compass.svg');
+  final _needleSvg = SvgPicture.asset(
+    'assets/images/needle.svg',
+    fit: BoxFit.contain,
+    height: 300,
+    alignment: Alignment.center,
+  );
 
+  final _locationStreamController = StreamController<LocationStatus>.broadcast();
+
+  get stream => _locationStreamController.stream;
+
+  Future<void> _checkLocationStatus() async {
+    final locationStatus = await FlutterQiblah.checkLocationStatus();
+    if (locationStatus.enabled &&
+        locationStatus.status == LocationPermission.denied) {
+      await FlutterQiblah.requestPermissions();
+      final s = await FlutterQiblah.checkLocationStatus();
+      _locationStreamController.sink.add(s);
+    } else {
+      _locationStreamController.sink.add(locationStatus);
+    }
+  }
   @override
   void initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    animation = Tween(begin: 0.0, end: 0.0).animate(_animationController!);
+   _checkLocationStatus();
     super.initState();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _locationStreamController.close();
+    FlutterQiblah().dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 48, 48, 48),
-        body: permissionGranted == PermissionStatus.granted ?
-        StreamBuilder(
-                stream: FlutterQiblah.qiblahStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                        alignment: Alignment.center,
-                        child: const CircularProgressIndicator(
-                          color: Colors.white,
-                        ));
-                  }
-                  final qiblahDirection = snapshot.data;
-                  animation = Tween(
-                          begin: begin,
-                          end: (qiblahDirection!.qiblah * (pi / 180) * -1))
-                      .animate(_animationController!);
-                  begin = (qiblahDirection.qiblah * (pi / 180) * -1);
-                  _animationController!.forward(from: 0);
-                  return Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "${qiblahDirection.direction.toInt()}°",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 24),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                              height: 300,
-                              child: AnimatedBuilder(
-                                animation: animation!,
-                                builder: (context, child) => Transform.rotate(
-                                    angle: animation!.value,
-                                    child:
-                                        Image.asset('assets/images/qibla.png')),
-                              ))
-                        ]),
-                  );
-                })
-            : const Center(
-                child: Text(
-                'الرجاء قم بتفعيل الموقع الجغرافي الخاص بك لكي نتمكن من تحديد اتجاه القبلة او قم بتفعيلها من الاعدادات',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              )),
+        body: FutureBuilder(
+          future: _deviceSupport,
+          builder: (_, AsyncSnapshot<bool?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error: ${snapshot.error.toString()}"),
+              );
+            }
+            if (snapshot.data!) {
+              return Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8.0),
+                child: StreamBuilder(
+                  stream: stream,
+                  builder: (context, AsyncSnapshot<LocationStatus> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.data!.enabled == true) {
+                      switch (snapshot.data!.status) {
+                        case LocationPermission.always:
+                        case LocationPermission.whileInUse:
+                          return StreamBuilder(
+                            stream: FlutterQiblah.qiblahStream,
+                            builder: (_, AsyncSnapshot<QiblahDirection> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting)
+                              {
+                                return const Center(child: CircularProgressIndicator(),);
+                              }
+
+                              final qiblahDirection = snapshot.data!;
+
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  Transform.rotate(
+                                    angle: (qiblahDirection.direction * (pi / 180) * -1),
+                                    child: _compassSvg,
+                                  ),
+                                  Transform.rotate(
+                                    angle: (qiblahDirection.qiblah * (pi / 180) * -1),
+                                    alignment: Alignment.center,
+                                    child: _needleSvg,
+                                  ),
+                                  Positioned(
+                                    bottom: 8,
+                                    child: Text("${qiblahDirection.offset.toStringAsFixed(3)}°"),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+
+                        case LocationPermission.denied:
+                          return LocationErrorWidget(
+                            error: "Location service permission denied",
+                            callback: _checkLocationStatus,
+                          );
+                        case LocationPermission.deniedForever:
+                          return LocationErrorWidget(
+                            error: "Location service Denied Forever !",
+                            callback: _checkLocationStatus,
+                          );
+                        default:
+                          return Container();
+                      }
+                    } else {
+                      return LocationErrorWidget(
+                        error: "Please enable Location service",
+                        callback: _checkLocationStatus,
+                      );
+                    }
+                  },
+                ),
+              );
+            } else {
+              return const Center(
+                child: Text("Your device is not supported"),
+              );
+            }
+          },
+        ),
       ),
     );
   }

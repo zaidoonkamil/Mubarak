@@ -1,5 +1,91 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:muslim_app/cubit/controller.dart';
+import 'package:workmanager/workmanager.dart';
+
+import 'constants.dart';
+
+
+FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+
+Future showNotificationDoea() async {
+
+  int randomIndex = Random().nextInt(smallDo3a2.length-1);
+
+  AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails(
+    '$randomIndex.0',
+    'Mubarak',
+    importance: Importance.max,
+    priority: Priority.high,
+    playSound: true,
+    enableVibration: true,
+
+  );
+  var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+  );
+
+  await flutterLocalNotificationsPlugin!.show(
+    randomIndex,
+    'فَذَكِّرْ',
+    smallDo3a2[randomIndex],
+    platformChannelSpecifics,
+  );
+}
+
+// Future showNotificationPrayers() async {
+//
+//   AndroidNotificationDetails androidPlatformChannelSpecifics =
+//   const AndroidNotificationDetails(
+//     'حان الان موعد الصلاة',
+//     'Mubarak',
+//     importance: Importance.max,
+//     priority: Priority.high,
+//     playSound: true,
+//     enableVibration: true,
+//
+//   );
+//   var platformChannelSpecifics = NotificationDetails(
+//       android: androidPlatformChannelSpecifics,
+//   );
+//
+//   await flutterLocalNotificationsPlugin!.show(
+//     0,
+//     'فَذَكِّرْ',
+//     ' حان الان موعد الصلاة//',
+//     platformChannelSpecifics,
+//   );
+//
+// }
+
+void callbackDispatcher() {
+
+  // initial notifications
+  var initializationSettingsAndroid = const AndroidInitializationSettings('@mipmap/z');
+
+  var initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  flutterLocalNotificationsPlugin!.initialize(
+    initializationSettings,
+  );
+
+
+  Workmanager().executeTask((task, inputData) {
+    showNotificationDoea();
+    return Future.value(true);
+  });
+}
 
 String durationToString(int minutes) {
   var d = Duration(minutes: minutes);

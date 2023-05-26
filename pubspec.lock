@@ -134,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  dbus:
+    dependency: transitive
+    description:
+      name: dbus
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.4"
   fake_async:
     dependency: transitive
     description:
@@ -195,6 +202,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_local_notifications:
+    dependency: "direct main"
+    description:
+      name: flutter_local_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "9.1.4"
+  flutter_local_notifications_linux:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0"
   flutter_qiblah:
     dependency: "direct main"
     description:
@@ -216,6 +244,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
+  flutter_svg:
+    dependency: "direct main"
+    description:
+      name: flutter_svg
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.21.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -309,7 +344,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.0"
+    version: "3.1.3"
   internet_connection_checker:
     dependency: "direct main"
     description:
@@ -366,27 +401,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-  location:
-    dependency: "direct main"
-    description:
-      name: location
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.4.0"
-  location_platform_interface:
-    dependency: transitive
-    description:
-      name: location_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.3.0"
-  location_web:
-    dependency: transitive
-    description:
-      name: location_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.1.1"
   logger:
     dependency: transitive
     description:
@@ -436,6 +450,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.2"
+  path_drawing:
+    dependency: transitive
+    description:
+      name: path_drawing
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1+1"
+  path_parsing:
+    dependency: transitive
+    description:
+      name: path_parsing
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   path_provider:
     dependency: transitive
     description:
@@ -485,41 +513,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
-  permission_handler:
-    dependency: "direct main"
-    description:
-      name: permission_handler
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "10.2.0"
-  permission_handler_android:
-    dependency: transitive
-    description:
-      name: permission_handler_android
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "10.2.0"
-  permission_handler_apple:
-    dependency: transitive
-    description:
-      name: permission_handler_apple
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "9.0.7"
-  permission_handler_platform_interface:
-    dependency: transitive
-    description:
-      name: permission_handler_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.9.0"
-  permission_handler_windows:
-    dependency: transitive
-    description:
-      name: permission_handler_windows
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.2"
   petitparser:
     dependency: transitive
     description:
@@ -728,6 +721,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.12"
+  timezone:
+    dependency: transitive
+    description:
+      name: timezone
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.0"
   typed_data:
     dependency: transitive
     description:
@@ -763,6 +763,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.3"
+  workmanager:
+    dependency: "direct main"
+    description:
+      name: workmanager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.1"
   xdg_directories:
     dependency: transitive
     description:
@@ -776,7 +783,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
+    version: "5.4.1"
   yaml:
     dependency: transitive
     description:
